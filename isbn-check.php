@@ -3,36 +3,50 @@
         <label for="isbnOhneP">ISBN ohne Pruefziffer: </label>
         <input type="text" id="isbnOhneP" name="isbnOhneP" placeholder="3-928475-32" required>
 
-        <button class= "btn btn-warning" name="btnGetPruefz" onclick="getPruefz();"> Prüfziffer berechnen</button>
+        <button class= "btn btn-warning" id="btnGetPruefz" name="btnGetPruefz"> Prüfziffer berechnen</button>
     </div>
 </div>
 <script>
-    function getPruefz(){
-        var isbn = document.getElementById('isbnOhneP').value;
-        var originIsbn = isbn;
-        isbn = isbn.replace(/[^0-9X]/gi, '');
+    $( document ).ready(function()
+    {
+        console.log("Ready");
 
-        var sum, pruefz i=0;
+        $("#btnGetPruefz").click(function(){
+            var originISBN =  $('#isbnOhneP').val();
+            alert('Origin: ' + originISBN.length);
+            var isbn = originISBN.replace(/-/g, '');
 
-        if (isbn.length != 9) {
-            return 'ISBN muss 10 Stellen lang sein';
-        }
+            alert('ISBN: ' + isbn.length);
 
-        for(i; i<isbn.length; i++)
-        {
-            sum +=isbn[i]*i;
-        }
-        pruefz = sum % 11;
+            var sum=0;
+            var pruefz=0
+            var i=1;
 
-        if(pruefz == 10)
-        {
-            pruefz = 'X';
-        }
+            if (isbn.length != 9) {
+                alert("ISBN ohne Prüfziffer muss 9 Stellen lang sein");
+                originISBN = 'ISBN ohne Prüfziffer muss 9 Stellen lang sein';
+                pruefz ='';
+            }
+            else {
 
-        var tag = document.createElement("span");
-        var text = document.createTextNode(originIsbn+ '-' + pruefz);
-        tag.appendChild(text);
-        var element = document.getElementById("isbnArea");
-        element.appendChild(tag);
-    }
+                var eachNum = isbn.toString().split('').map(iNum => parseInt(iNum, 10));
+
+                for (i; i <=isbn.length; i++) {
+                    sum += eachNum[i-1] * i;
+                    //alert('sum: '+ sum + ' eachNum: '+ eachNum[i-1] + (i));
+                }
+                alert(sum);
+                pruefz = sum % 11;
+
+                if (pruefz === 10) {
+                    pruefz = 'X';
+                }
+            }
+            var $input = $("<input name='isbnMitPruef'>").text(originISBN+'-' +pruefz);
+                $input.val(originISBN+'-' +pruefz);
+
+            $('#isbnArea').append('<br><label for="isbnMitPruef">ISBN mit Pruefziffer: </label>');
+            $('#isbnArea').append($input);
+        });
+    });
 </script>
